@@ -1,18 +1,12 @@
 'use strict';
 
-import * as vscode from 'vscode';
+import {commands, ExtensionContext, window} from 'vscode';
 import * as cp from 'child_process';
 
-function selectedText(): string {
-    let editor = vscode.window.activeTextEditor;
-    let doc = editor.document;
-    let selection = editor.selection;
-    return doc.getText(selection);
-}
-
 function sayHello() {
-    // vscode.window.showInformationMessage('Hello World!');
-    let text = selectedText();
+    let editor = window.activeTextEditor;
+    // get selected text.
+    let text = editor.document.getText(editor.selection);
 
     var pandoc = cp.exec("pandoc --from=markdown --to=latex", (err, stdout, stderr) => {
         if (err) {
@@ -20,12 +14,8 @@ function sayHello() {
             return;
         }
 
-        console.log("converted: \"%s\"", stdout);
-        // TODO: replace selected text to converted string.
-
-        vscode.window.activeTextEditor.edit((edit) => {
-            let selection = vscode.window.activeTextEditor.selection;
-            edit.replace(selection, stdout);
+        window.activeTextEditor.edit((edit) => {
+            edit.replace(editor.selection, stdout);
         });
     });
 
@@ -34,7 +24,7 @@ function sayHello() {
     pandoc.stdin.end();
 }
 
-export function activate(context: vscode.ExtensionContext) {
-    let disposable = vscode.commands.registerCommand('extension.sayHello', sayHello); 
+export function activate(context: ExtensionContext) {
+    let disposable = commands.registerCommand('extension.sayHello', sayHello); 
     context.subscriptions.push(disposable);
 }
