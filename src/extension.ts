@@ -22,6 +22,11 @@ function sayHello() {
 
         console.log("converted: \"%s\"", stdout);
         // TODO: replace selected text to converted string.
+
+        vscode.window.activeTextEditor.edit((edit) => {
+            let selection = vscode.window.activeTextEditor.selection;
+            edit.replace(selection, stdout);
+        });
     });
 
     // send text.
