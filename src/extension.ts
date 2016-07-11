@@ -11,13 +11,13 @@ export function activate(context: ExtensionContext) {
         let text = editor.document.getText(editor.selection);
 
         // create the instance of pandoc executable with callback.
-        var pandoc = cp.exec("pandoc --from=markdown --to=latex", (err, stdout, stderr) => {
+        let pandoc = cp.exec("pandoc --from=markdown --to=latex", (err, stdout, stderr) => {
             if (err) {
                 console.error("pandoc failed: %s", stderr);
                 return;
             }
 
-            window.activeTextEditor.edit((edit) => {
+            editor.edit((edit) => {
                 edit.replace(editor.selection, stdout);
             });
         });
